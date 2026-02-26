@@ -42,19 +42,48 @@ function handleSend() {
     }
 }
 
-function processBotResponse() {
+function handleSend() {
+    const text = messageInput.value.trim();
+    if (text !== '') {
+        appendMessage(text, 'user');
+        messageInput.value = '';
+        // FIX: Pass 'text' into the function so the bot can read it
+        processBotResponse(text); 
+    }
+}
+
+function processBotResponse(userText) {
     typingIndicator.style.display = 'block';
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     setTimeout(() => {
         typingIndicator.style.display = 'none';
-        appendMessage("Thank you for asking about that. For DepEd Mandaue specific details, please visit our official portal or stay tuned for more automated updates.", 'bot');
-    }, 2000);
+
+        // Convert input to lowercase for easier matching
+        const input = userText.toLowerCase();
+        let response = "";
+
+        if (input.includes("enrollment")) {
+            response = "For enrollment requirements, please bring your Form 138 and PSA Birth Certificate.";
+        } 
+        else if (input.includes("calendar")) {
+            response = "The school calendar starts in August and ends in May.";
+        }
+        else if (input.includes("contact")) {
+            response = "You may contact the Division Office at (032) 123-4567.";
+        }
+        else {
+            // NEW: Your custom fallback message for anything else typed
+            response = "Thank you for reaching out. A representative or automated system will respond to your query regarding DepEd Mandaue shortly.";
+        }
+
+        appendMessage(response, 'bot');
+    }, 1500);
 }
 
 function handleQuickAction(topic) {
     appendMessage(topic, 'user');
-    processBotResponse();
+    processBotResponse(topic);
 }
 
 // Event Listeners
